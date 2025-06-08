@@ -1,11 +1,11 @@
 {
     "name": "next-yandex-metrica-service",
-    "version": "0.0.2",
+    "version": "1.0.0",
     "files": [
-        "dist"
+        "dist/src"
     ],
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
     "repository": "https://github.com/monolithed/next-yandex-metrica-service",
     "author": "monolithed",
     "license": "MIT",
