@@ -20,7 +20,7 @@
         "analytics"
     ],
     "scripts": {
-        "build": "del-cli dist && tsc",
+        "build": "test && del-cli dist && tsc",
         "prepublishOnly": "npm run build",
         "lint": "tsc --noEmit",
         "test": "jest",
