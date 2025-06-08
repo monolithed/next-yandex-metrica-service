@@ -21,7 +21,7 @@
     ],
     "scripts": {
         "build": "del-cli dist && tsc",
-        "prepublishOnly": "npm build",
+        "prepublishOnly": "npm run build",
         "lint": "tsc --noEmit",
         "test": "jest",
         "test:ci": "jest --ci --coverage"
