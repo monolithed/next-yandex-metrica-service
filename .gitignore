@@ -43,3 +43,4 @@ tsconfig.tsbuildinfo
 nohup.out
 .vercel
 coverage
+dist
