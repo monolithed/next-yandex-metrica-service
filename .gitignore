@@ -1,0 +1,45 @@
+# --------------------------
+# System
+# --------------------------
+
+*~
+*#*
+._*
+\#*
+*.bak
+*.tmp
+*.swp
+*.pid
+.DS_Store
+
+# --------------------------
+# Git
+# --------------------------
+
+.gitconfig
+
+# --------------------------
+# Node
+# --------------------------
+
+.npm
+
+#.npmrc
+/node_modules
+npm-debug.log
+
+# --------------------------
+# Project
+# --------------------------
+
+.idea
+.idea_modules/
+
+.next
+/logs
+
+*.js.map
+tsconfig.tsbuildinfo
+nohup.out
+.vercel
+coverage
