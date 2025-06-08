@@ -1,5 +1,4 @@
 import type React from 'react';
-
 import {Endpoints} from './endpoints';
 
 type Props = {
