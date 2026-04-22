@@ -17,8 +17,11 @@ const WINDOW_YM_MOCK = jest.fn();
 const TAG_ID = 444;
 
 describe('useTrackRouteChange (next/navigation)', () => {
-    const originalLocation = window.location;
     let spyOnYmHelper: jest.SpyInstance;
+
+    const setLocation = (path: string) => {
+        window.history.pushState({}, '', path);
+    };
 
     beforeEach(() => {
         WINDOW_YM_MOCK.mockClear();
@@ -26,31 +29,14 @@ describe('useTrackRouteChange (next/navigation)', () => {
 
         spyOnYmHelper = jest.spyOn(ym, 'ym');
 
-        Object.defineProperty(window, 'location', {
-            configurable: true,
-            value: {
-                ...originalLocation,
-                href: 'http://localhost/initial-path',
-                pathname: '/initial-path',
-                origin: 'http://localhost',
-            },
-        });
+        window[YANDEX_METRICA_NAMESPACE] = WINDOW_YM_MOCK;
 
-        Object.defineProperty(window, YANDEX_METRICA_NAMESPACE, {
-            configurable: true,
-            value: WINDOW_YM_MOCK,
-        });
+        setLocation('/initial-path');
     });
 
     afterEach(() => {
-        Object.defineProperty(window, 'location', {
-            configurable: true,
-            value: originalLocation,
-        });
-        Object.defineProperty(window, YANDEX_METRICA_NAMESPACE, {
-            configurable: true,
-            value: undefined,
-        });
+        window[YANDEX_METRICA_NAMESPACE] = undefined;
+
         spyOnYmHelper.mockRestore();
     });
 
@@ -60,73 +46,66 @@ describe('useTrackRouteChange (next/navigation)', () => {
         renderHook(() => useTrackRouteChange({tagID: TAG_ID}));
 
         expect(spyOnYmHelper).toHaveBeenCalledTimes(1);
-        expect(spyOnYmHelper).toHaveBeenCalledWith(TAG_ID, YandexMetricaEvents.HIT, 'http://localhost/initial-path');
+        expect(spyOnYmHelper).toHaveBeenCalledWith(
+            TAG_ID,
+            YandexMetricaEvents.HIT,
+            'http://localhost/initial-path'
+        );
 
         expect(WINDOW_YM_MOCK).toHaveBeenCalledTimes(1);
-        expect(WINDOW_YM_MOCK).toHaveBeenCalledWith(TAG_ID, YandexMetricaEvents.HIT, 'http://localhost/initial-path');
 
+        expect(WINDOW_YM_MOCK).toHaveBeenCalledWith(
+            TAG_ID,
+            YandexMetricaEvents.HIT,
+            'http://localhost/initial-path'
+        );
 
-        Object.defineProperty(window, 'location', {
-            configurable: true,
-            value: {
-                ...originalLocation,
-                href: 'http://localhost/new-path',
-                pathname: '/new-path',
-                origin: 'http://localhost',
-            },
-        });
+        setLocation('/new-path');
         mockUsePathname.mockReturnValue('/new-path');
 
         renderHook(() => useTrackRouteChange({tagID: TAG_ID}));
 
         expect(spyOnYmHelper).toHaveBeenCalledTimes(2);
-        expect(spyOnYmHelper).toHaveBeenCalledWith(TAG_ID, YandexMetricaEvents.HIT, 'http://localhost/new-path');
+
+        expect(spyOnYmHelper).toHaveBeenCalledWith(
+            TAG_ID,
+            YandexMetricaEvents.HIT,
+            'http://localhost/new-path'
+        );
 
         expect(WINDOW_YM_MOCK).toHaveBeenCalledTimes(2);
-        expect(WINDOW_YM_MOCK).toHaveBeenCalledWith(TAG_ID, YandexMetricaEvents.HIT, 'http://localhost/new-path');
+
+        expect(WINDOW_YM_MOCK).toHaveBeenCalledWith(
+            TAG_ID,
+            YandexMetricaEvents.HIT,
+            'http://localhost/new-path'
+        );
     });
 
     it('does not track if tagID is null', () => {
-        Object.defineProperty(window, 'location', {
-            configurable: true,
-            value: {
-                ...originalLocation,
-                href: 'http://localhost/some-path',
-                pathname: '/some-path',
-                origin: 'http://localhost',
-            },
-        });
+        setLocation('/some-path');
         mockUsePathname.mockReturnValue('/some-path');
 
         renderHook(() => useTrackRouteChange({tagID: null}));
 
         expect(spyOnYmHelper).not.toHaveBeenCalled();
-
         expect(WINDOW_YM_MOCK).not.toHaveBeenCalled();
     });
 
-
     it('does not track if ym is not available', () => {
-        Object.defineProperty(window, YANDEX_METRICA_NAMESPACE, {
-            configurable: true,
-            value: undefined,
-        });
+        window[YANDEX_METRICA_NAMESPACE] = undefined;
 
-        Object.defineProperty(window, 'location', {
-            configurable: true,
-            value: {
-                ...originalLocation,
-                href: 'http://localhost/some-path',
-                pathname: '/some-path',
-                origin: 'http://localhost',
-            },
-        });
+        setLocation('/some-path');
         mockUsePathname.mockReturnValue('/some-path');
 
         renderHook(() => useTrackRouteChange({tagID: TAG_ID}));
 
         expect(spyOnYmHelper).toHaveBeenCalledTimes(1);
-        expect(spyOnYmHelper).toHaveBeenCalledWith(TAG_ID, YandexMetricaEvents.HIT, 'http://localhost/some-path');
+        expect(spyOnYmHelper).toHaveBeenCalledWith(
+            TAG_ID,
+            YandexMetricaEvents.HIT,
+            'http://localhost/some-path'
+        );
 
         expect(WINDOW_YM_MOCK).not.toHaveBeenCalled();
     });
